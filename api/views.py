@@ -14,7 +14,7 @@ from rest_framework import mixins, generics, viewsets
 from .paginations import CustomPagination
 from employees.filters import EmployeeFilter
 from django_filters import rest_framework as filters
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 # def students_view(request):
 #     students = Student.objects.all()
@@ -206,6 +206,7 @@ class BlogsView(generics.ListCreateAPIView):
     serializer_class = BlogSerializer
     filter_backends = [SearchFilter]
     search_fields = ['blog_title', 'blog_body']
+    ordering_fields = ['id', 'blog_title']
 
 
 class CommentsView(generics.ListCreateAPIView):
