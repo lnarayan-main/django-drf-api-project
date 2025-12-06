@@ -2,13 +2,19 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from students.models import Student
 from employees.models import Employee
+from blogs.models import Blog, Comment
 from .serializers import StudentSerializer, EmployeeSerializer
+from blogs.serializers import BlogSerializer, CommentSerializer
 from rest_framework.response import Response 
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework import mixins, generics, viewsets
+from .paginations import CustomPagination
+from employees.filters import EmployeeFilter
+from django_filters import rest_framework as filters
+from rest_framework.filters import SearchFilter
 
 # def students_view(request):
 #     students = Student.objects.all()
@@ -188,3 +194,33 @@ class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView):
 class EmployeeViewset(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
+    pagination_class = CustomPagination  # *********** Custom pagination **************
+    filter_backends = [filters.DjangoFilterBackend,]
+    # filterset_fields = ['emp_name', 'designation']
+    filterset_class = EmployeeFilter
+
+
+
+class BlogsView(generics.ListCreateAPIView):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['blog_title', 'blog_body']
+
+
+class CommentsView(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+
+
+class BlogDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+    lookup_field = 'pk'
+
+
+class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    lookup_field = 'pk'
